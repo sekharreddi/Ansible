@@ -1,0 +1,11 @@
+---
+- name: to check status of httpd
+  hosts: db
+  become: yes
+  tasks:
+    - name: check httpd is started or not
+      command: systemctl status httpd
+    - name: stop the httpd 
+      service:
+        name: httpd
+        state: stopped

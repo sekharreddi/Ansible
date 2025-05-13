@@ -1,0 +1,10 @@
+---
+- name: update page with content
+  hosts: all
+  become: yes
+  tasks:
+    - name: copy page content
+      copy:
+        src: /home/sekharred/text.txt
+        dest: /var/www/html/index.html
+        mode: '0644'

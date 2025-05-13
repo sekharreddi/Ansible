@@ -1,0 +1,47 @@
+---
+- name: Set up Git and add files to a repo
+  hosts: db
+  become: yes
+  vars:
+    repo_path: /home/ec2-user/myrepo
+    sample_file: playbook2.yml
+
+  tasks:
+    - name: Install Git
+      yum:
+        name: git
+        state: present
+
+    - name: Create repo directory
+      file:
+        path: "{{ repo_path }}"
+        state: directory
+        owner: ec2-user
+        group: ec2-user
+        mode: '0755'
+
+    - name: Initialize empty git repo
+      command: git init
+      args:
+        chdir: "{{ repo_path }}"
+
+    - name: Add a sample file
+      copy:
+        dest: "{{ repo_path }}/{{ sample_file }}"
+        content: "This is a sample file for Git repository.\n"
+
+    - name: Add file to git staging
+      command: git add {{ sample_file }}
+      args:
+        chdir: "{{ repo_path }}"
+
+    - name: Commit file to git
+      command: git commit -m "Initial commit"
+      args:
+        chdir: "{{ repo_path }}"
+      environment:
+        GIT_AUTHOR_NAME: Ansible
+        GIT_AUTHOR_EMAIL: ansible@example.com
+        GIT_COMMITTER_NAME: Ansible
+        GIT_COMMITTER_EMAIL: ansible@example.com
+
